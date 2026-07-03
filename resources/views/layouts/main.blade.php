@@ -8,7 +8,8 @@
 </head>
 <body>
     <nav>
-        <a href="">Categories</a>
+        <a href="{{ route('categories.index') }}">Categories</a>
+        <a href="{{ route('products.index') }}">Products</a>
     </nav>
 
     <main>
