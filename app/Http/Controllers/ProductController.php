@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Product\StoreProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -29,16 +31,10 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-        ]);
-        Product::create($validated);
-        return to_route('products.index');
+        Product::create($request->validated());
+        return to_route('products.index')->with('success', 'created product successfully!');
     }
 
     /**
@@ -61,16 +57,10 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-        ]);
-        $product->update($validated);
-        return to_route('products.index');
+        $product->update($request->validated());
+        return to_route('products.index')->with('success', 'updated product successfully!');
     }
 
     /**
@@ -79,6 +69,6 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
-        return to_route('products.index');
+        return to_route('products.index')->with('success', 'deleted product successfully!');
     }
 }
