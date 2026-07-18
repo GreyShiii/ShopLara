@@ -13,10 +13,19 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('category')->simplePaginate(5);
-        return view('products.index', compact('products'));
+        $categories = Category::all();
+        $products = Product::with('category')
+            ->when($request->search, function ($query, $search) {
+                $query->where('name', 'LIKE', '%' . $search . '%');
+            })
+            ->when($request->category_id, function ($query, $category_id) {
+                $query->where('category_id', $category_id);
+            })
+        ->simplePaginate(5);
+
+        return view('products.index', compact('products', 'categories'));
     }
 
     /**
