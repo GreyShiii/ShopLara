@@ -15,6 +15,8 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Product::class);
+
         $categories = Category::all();
         $products = Product::with('category')
             ->when($request->search, function ($query, $search) {
@@ -33,6 +35,8 @@ class ProductController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Product::class);
+
         $categories = Category::all();
         return view('products.create', compact('categories'));
     }
@@ -42,6 +46,8 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
+        $this->authorize('create', Product::class);
+
         Product::create($request->validated());
         return to_route('products.index')->with('success', 'created product successfully!');
     }
@@ -59,6 +65,8 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        $this->authorize('update', Product::class);
+
         $categories = Category::all();
         return view('products.edit', compact('product', 'categories'));
     }
@@ -68,6 +76,8 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
+        $this->authorize('update', Product::class);
+
         $product->update($request->validated());
         return to_route('products.index')->with('success', 'updated product successfully!');
     }
@@ -77,6 +87,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        $this->authorize('delete', Product::class);
+
         $product->delete();
         return to_route('products.index')->with('success', 'deleted product successfully!');
     }
