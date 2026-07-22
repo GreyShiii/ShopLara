@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\StoreProductRequest as ApiStoreProductRequest;
-use App\Http\Requests\Api\UpdateProductRequest as ApiUpdateProductRequest;
-use App\Http\Requests\Product\StoreProductRequest;
-use App\Http\Requests\Product\UpdateProductRequest;
+use App\Http\Requests\Api\StoreProductRequest;
+use App\Http\Requests\Api\UpdateProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -17,7 +15,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::simplePaginate(10);
+        $product = Product::with('category')->simplePaginate(10);
         return response()->json($product, 200);
     }
 
@@ -33,9 +31,9 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Product $product)
     {
-        //
+        return response()->json($product->load('category'));
     }
 
     /**
@@ -43,7 +41,7 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        $product = $product->update($request->validated());
+        $product->update($request->validated());
         return response()->json($product, 200);
     }
 
@@ -52,7 +50,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $product = $product->delete();
+        $product->delete();
         return response()->json($product, 204);
     }
 }
